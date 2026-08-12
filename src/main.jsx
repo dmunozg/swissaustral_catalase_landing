@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { ArrowUpRight } from "lucide-react";
 import "./styles.css";
 
 const navItems = [
@@ -58,14 +59,6 @@ function SwissaustralMark({ light = false }) {
   );
 }
 
-function ArrowIcon() {
-  return (
-    <span aria-hidden="true" className="arrow-icon">
-      ↗
-    </span>
-  );
-}
-
 function Reveal({ children, className = "" }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -109,7 +102,7 @@ function Button({ children, href = "#contact", variant = "dark", onClick }) {
   return (
     <a className={`button button--${variant}`} href={href} onClick={onClick}>
       {children}
-      <ArrowIcon />
+      <ArrowUpRight className="arrow-icon" aria-hidden="true" />
     </a>
   );
 }
@@ -200,7 +193,7 @@ function App() {
             <a key={id} href={`#${id}`} onClick={goTo(`#${id}`)}>
               <span>0{index + 1}</span>
               {label}
-              <ArrowIcon />
+              <ArrowUpRight className="arrow-icon" aria-hidden="true" />
             </a>
           ))}
           <Button href="#contact" variant="light" onClick={goTo("#contact")}>
@@ -237,7 +230,8 @@ function App() {
                 href="#mechanism"
                 onClick={goTo("#mechanism")}
               >
-                See how it works <ArrowIcon />
+                See how it works{" "}
+                <ArrowUpRight className="arrow-icon" aria-hidden="true" />
               </a>
             </div>
             <div className="hero-bottomline">
@@ -299,7 +293,7 @@ function App() {
                   <h3>{title}</h3>
                   <p>{text}</p>
                   <span className="card-arrow">
-                    <ArrowIcon />
+                    <ArrowUpRight className="arrow-icon" aria-hidden="true" />
                   </span>
                 </Reveal>
               ))}
@@ -656,7 +650,7 @@ function App() {
                     {submitted
                       ? "Message staged"
                       : "Start a technical conversation"}
-                    <ArrowIcon />
+                    <ArrowUpRight className="arrow-icon" aria-hidden="true" />
                   </button>
                 </div>
                 {submitted && (

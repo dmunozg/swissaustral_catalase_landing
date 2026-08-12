@@ -314,8 +314,9 @@ h3 {
   color: white;
 }
 .arrow-icon {
-  font-size: 17px;
-  line-height: 0.8;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
   transition: transform 0.2s;
 }
 .button:hover .arrow-icon,
