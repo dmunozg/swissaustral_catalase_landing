@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  ArrowRight,
   ArrowUpRight,
   ChartNoAxesColumnIncreasing,
   Droplets,
@@ -305,11 +304,7 @@ function App() {
                   <h3>{title}</h3>
                   <p>{text}</p>
                   <span className="card-arrow">
-                    <Icon
-                      size={17}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
+                    <Icon size={32} strokeWidth={1.5} aria-hidden="true" />
                   </span>
                 </Reveal>
               ))}
@@ -354,24 +349,23 @@ function App() {
               <div className="reaction-row">
                 <div className="reaction-label">BIOSENSOR REACTION</div>
                 <div className="reaction-content">
-                <div className="molecule-chip molecule-chip--analyte">
-                  Analyte
-                </div>
-                <span className="reaction-plus">+</span>
-                <div className="molecule-chip molecule-chip--oxygen">
-                  O<sub>2</sub>
-                </div>
-                <span className="reaction-arrow">
-                  <span>OXIDASE</span>
-                  <ArrowRight className="reaction-arrow-icon" aria-hidden="true" />
-                </span>
-                <div className="molecule-chip molecule-chip--product">
-                  Product
-                </div>
-                <span className="reaction-plus">+</span>
-                <div className="molecule-chip molecule-chip--peroxide">
-                  H<sub>2</sub>O<sub>2</sub>
-                </div>
+                  <div className="molecule-chip molecule-chip--analyte">
+                    Analyte
+                  </div>
+                  <span className="reaction-plus">+</span>
+                  <div className="molecule-chip molecule-chip--oxygen">
+                    O<sub>2</sub>
+                  </div>
+                  <span className="reaction-arrow">
+                    <span>OXIDASE</span> →
+                  </span>
+                  <div className="molecule-chip molecule-chip--product">
+                    Product
+                  </div>
+                  <span className="reaction-plus">+</span>
+                  <div className="molecule-chip molecule-chip--peroxide">
+                    H<sub>2</sub>O<sub>2</sub>
+                  </div>
                 </div>
               </div>
               <div className="reaction-divider">
@@ -381,20 +375,20 @@ function App() {
               <div className="reaction-row reaction-row--catalase">
                 <div className="reaction-label">OXYGEN RECOVERY</div>
                 <div className="reaction-content">
-                <div className="molecule-chip molecule-chip--peroxide">
-                  2H<sub>2</sub>O<sub>2</sub>
-                </div>
-                <span className="reaction-arrow">
-                  <span className="catalase-label">COLD-ACTIVE CATALASE</span>
-                  <ArrowRight className="reaction-arrow-icon" aria-hidden="true" />
-                </span>
-                <div className="molecule-chip molecule-chip--water">
-                  2H<sub>2</sub>O
-                </div>
-                <span className="reaction-plus">+</span>
-                <div className="molecule-chip molecule-chip--oxygen">
-                  O<sub>2</sub>
-                </div>
+                  <div className="molecule-chip molecule-chip--peroxide">
+                    2H<sub>2</sub>O<sub>2</sub>
+                  </div>
+                  <span className="reaction-arrow">
+                    <span className="catalase-label">COLD-ACTIVE CATALASE</span>{" "}
+                    →
+                  </span>
+                  <div className="molecule-chip molecule-chip--water">
+                    2H<sub>2</sub>O
+                  </div>
+                  <span className="reaction-plus">+</span>
+                  <div className="molecule-chip molecule-chip--oxygen">
+                    O<sub>2</sub>
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -605,8 +599,9 @@ function App() {
             </div>
             <div className="why-bottom">
               <p>
-                These characteristics make <em>Cold-Active Catalase</em> worth evaluating
-                as a peroxide-management component in your oxidase-based sensor.
+                These characteristics make <em>Cold-Active Catalase</em> worth
+                evaluating as a peroxide-management component in your
+                oxidase-based sensor.
               </p>
               <Button
                 href="#contact"
@@ -643,7 +638,6 @@ function App() {
               </p>
               <div className="contact-aside">
                 <span>SWISSAUSTRAL</span>
-                <span>Unlock the power of nature™</span>
               </div>
             </Reveal>
             <Reveal className="contact-form-wrap">
@@ -706,7 +700,6 @@ function App() {
           </p>
           <div className="footer-bottom">
             <span>© Swissaustral · 2026</span>
-            
           </div>
         </div>
       </footer>
