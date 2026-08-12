@@ -5,6 +5,7 @@ import {
   ChartNoAxesColumnIncreasing,
   Droplets,
   Expand,
+  RefreshCw,
   Search,
 } from "lucide-react";
 import "./styles.css";
@@ -392,7 +393,11 @@ function App() {
             </Reveal>
             <Reveal className="mechanism-bottom">
               <div>
-                <span className="big-number">01</span>
+                <RefreshCw
+                  className="big-number"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
                 <p>
                   Dispose of peroxide while returning part of the consumed
                   oxygen to the sensing layer.

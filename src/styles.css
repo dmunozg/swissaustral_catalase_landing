@@ -633,10 +633,9 @@ h3 em {
 }
 .big-number {
   color: #e6282f;
-  font-family: Montserrat;
-  font-size: 45px;
-  line-height: 0.8;
-  letter-spacing: -0.08em;
+  width: 45px;
+  height: 45px;
+  flex: 0 0 45px;
 }
 .mechanism-bottom p {
   color: rgba(229, 241, 243, 0.7);
