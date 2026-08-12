@@ -115,4 +115,32 @@ describe("contact contract", () => {
 
     expect(responses.map(({ status }) => status)).toEqual([200, 200, 429]);
   });
+
+  test("allows a client to submit again after its rate-limit window expires", async () => {
+    let currentTime = 1_000;
+    const testSeams = createContactHandler({
+      config,
+      verifyTurnstile: async () => true,
+      sendMail: async () => {},
+      now: () => currentTime,
+      clientKey: (currentRequest) => currentRequest.headers.get("x-client") ?? "unknown",
+    });
+
+    const clientRequest = () => new Request("https://example.test/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: config.productionOrigin,
+        "X-Client": "expired-client",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    expect((await testSeams(clientRequest())).status).toBe(200);
+    expect((await testSeams(clientRequest())).status).toBe(200);
+    expect((await testSeams(clientRequest())).status).toBe(429);
+
+    currentTime += config.rateLimitWindowMs + 1;
+    expect((await testSeams(clientRequest())).status).toBe(200);
+  });
 });

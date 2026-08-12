@@ -9,6 +9,8 @@ export const CONTACT_LIMITS = {
 
 export const CONTACT_MAX_BODY_BYTES = 16_384;
 
+const ATTEMPTS_CLEANUP_BUDGET = 16;
+
 export interface ContactPayload {
   name: string;
   email: string;
@@ -133,6 +135,20 @@ export function createContactHandler(dependencies: ContactDependencies): Contact
   const attempts = new Map<string, number[]>();
   const now = dependencies.now ?? Date.now;
   const clientKey = dependencies.clientKey ?? ((request) => defaultClientKey(request, dependencies.config.trustProxy));
+  let cleanupIterator: ReturnType<typeof attempts.entries> | undefined;
+
+  const cleanupExpiredAttempts = (cutoff: number) => {
+    cleanupIterator ??= attempts.entries();
+    for (let inspected = 0; inspected < ATTEMPTS_CLEANUP_BUDGET; inspected += 1) {
+      const entry = cleanupIterator.next();
+      if (entry.done) {
+        cleanupIterator = attempts.entries();
+        return;
+      }
+      const [key, timestamps] = entry.value;
+      if (timestamps.every((timestamp) => timestamp <= cutoff)) attempts.delete(key);
+    }
+  };
 
   return async (request) => {
     if (request.method !== "POST" || new URL(request.url).pathname !== "/api/contact") {
@@ -149,6 +165,7 @@ export function createContactHandler(dependencies: ContactDependencies): Contact
     const currentTime = now();
     const key = clientKey(request);
     const cutoff = currentTime - dependencies.config.rateLimitWindowMs;
+    cleanupExpiredAttempts(cutoff);
     const recent = (attempts.get(key) ?? []).filter((timestamp) => timestamp > cutoff);
     if (recent.length >= dependencies.config.rateLimitMax) {
       attempts.set(key, recent);

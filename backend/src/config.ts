@@ -71,7 +71,13 @@ const origin = (env: Environment): string => {
   } catch {
     throw new ConfigError("PRODUCTION_ORIGIN must be an absolute URL");
   }
-  if (!/https?:/.test(parsed.protocol) || parsed.pathname !== "/" || parsed.search || parsed.hash) {
+  if (
+    (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+    parsed.origin === "null" ||
+    parsed.pathname !== "/" ||
+    parsed.search ||
+    parsed.hash
+  ) {
     throw new ConfigError("PRODUCTION_ORIGIN must be an HTTP(S) origin");
   }
   return parsed.origin;
