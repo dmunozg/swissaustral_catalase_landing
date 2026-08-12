@@ -545,16 +545,23 @@ h3 em {
 }
 .reaction-row {
   padding: 29px 18px;
-  display: flex;
+  /* display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
   gap: 10px;
+}
+.reaction-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 .reaction-label {
   width: 100%;
   color: #a4d4da;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .molecule-chip {
   min-width: 63px;
@@ -563,7 +570,7 @@ h3 em {
   border-radius: 100px;
   text-align: center;
   font-family: Montserrat, sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   color: white;
 }
 .molecule-chip--oxygen {
@@ -593,19 +600,23 @@ h3 em {
   margin-bottom: 5px;
   color: rgba(229, 241, 243, 0.55);
   font-family: "DM Sans", sans-serif;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.13em;
 }
 .reaction-arrow .catalase-label {
   color: #e6282f;
   font-weight: 700;
 }
+.reaction-arrow-icon {
+  width: 17px;
+  height: 17px;
+}
 .reaction-divider {
   display: flex;
   align-items: center;
   gap: 13px;
   padding: 0 18px;
-  color: rgba(229, 241, 243, 0.42);
+  color: #a4d4da;
   font-size: 10px;
   font-style: italic;
 }

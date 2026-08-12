@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
+  ArrowRight,
   ArrowUpRight,
   ChartNoAxesColumnIncreasing,
   Droplets,
@@ -352,6 +353,7 @@ function App() {
             <Reveal className="reaction-diagram">
               <div className="reaction-row">
                 <div className="reaction-label">BIOSENSOR REACTION</div>
+                <div className="reaction-content">
                 <div className="molecule-chip molecule-chip--analyte">
                   Analyte
                 </div>
@@ -360,7 +362,8 @@ function App() {
                   O<sub>2</sub>
                 </div>
                 <span className="reaction-arrow">
-                  <span>OXIDASE</span> →
+                  <span>OXIDASE</span>
+                  <ArrowRight className="reaction-arrow-icon" aria-hidden="true" />
                 </span>
                 <div className="molecule-chip molecule-chip--product">
                   Product
@@ -369,6 +372,7 @@ function App() {
                 <div className="molecule-chip molecule-chip--peroxide">
                   H<sub>2</sub>O<sub>2</sub>
                 </div>
+                </div>
               </div>
               <div className="reaction-divider">
                 <span>signal generated</span>
@@ -376,11 +380,13 @@ function App() {
               </div>
               <div className="reaction-row reaction-row--catalase">
                 <div className="reaction-label">OXYGEN RECOVERY</div>
+                <div className="reaction-content">
                 <div className="molecule-chip molecule-chip--peroxide">
                   2H<sub>2</sub>O<sub>2</sub>
                 </div>
                 <span className="reaction-arrow">
-                  <span className="catalase-label">COLD-ACTIVE CATALASE</span> →
+                  <span className="catalase-label">COLD-ACTIVE CATALASE</span>
+                  <ArrowRight className="reaction-arrow-icon" aria-hidden="true" />
                 </span>
                 <div className="molecule-chip molecule-chip--water">
                   2H<sub>2</sub>O
@@ -388,6 +394,7 @@ function App() {
                 <span className="reaction-plus">+</span>
                 <div className="molecule-chip molecule-chip--oxygen">
                   O<sub>2</sub>
+                </div>
                 </div>
               </div>
             </Reveal>
