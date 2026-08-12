@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  ChartNoAxesColumnIncreasing,
+  Droplets,
+  Expand,
+  Search,
+} from "lucide-react";
 import "./styles.css";
 
 const navItems = [
@@ -268,32 +274,40 @@ function App() {
             <div className="limitation-grid">
               {[
                 [
+                  ChartNoAxesColumnIncreasing,
                   "",
                   "Low sensitivity",
                   "A weak response to changes in analyte concentration.",
                 ],
                 [
+                  Expand,
                   "",
                   "Limited linear range",
                   "Early saturation across the target concentration range.",
                 ],
                 [
+                  Search,
                   "",
                   "High detection limit",
                   "Insufficient response at lower analyte concentrations.",
                 ],
                 [
+                  Droplets,
                   "",
                   "Peroxide accumulation",
                   "A reactive by-product building up in the sensing layer.",
                 ],
-              ].map(([number, title, text]) => (
+              ].map(([Icon, number, title, text]) => (
                 <Reveal key={number} className="limitation-card">
                   <span className="card-number">{number}</span>
                   <h3>{title}</h3>
                   <p>{text}</p>
                   <span className="card-arrow">
-                    <ArrowUpRight className="arrow-icon" aria-hidden="true" />
+                    <Icon
+                      size={17}
+                      strokeWidth={1.5}
+                      aria-hidden="true"
+                    />
                   </span>
                 </Reveal>
               ))}
