@@ -29,7 +29,8 @@ Backend variables in `backend/.env`:
   scheme and port when applicable (for example `http://localhost:5173`).
 - `TURNSTILE_SECRET_KEY`: private Cloudflare secret; never put this in the
   frontend or commit it.
-- `TURNSTILE_EXPECTED_HOSTNAME`: optional hostname check for production.
+- `TURNSTILE_EXPECTED_HOSTNAME`: optional override for the Turnstile hostname
+  check. When unset, the hostname from `PRODUCTION_ORIGIN` is required.
 - `TURNSTILE_TIMEOUT_MS`: Turnstile verification timeout.
 - `TRUST_PROXY`: set to `true` only when a trusted production proxy overwrites
   `X-Forwarded-For` before forwarding to Bun.

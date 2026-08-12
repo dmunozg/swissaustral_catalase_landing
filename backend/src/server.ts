@@ -15,7 +15,7 @@ export function createTurnstileVerifier(config: ReturnType<typeof loadConfig>) {
       const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: form, signal: controller.signal });
       if (!response.ok) return false;
       const result = (await response.json()) as TurnstileResponse;
-      return result.success === true && result.action === "contact" && (!config.turnstileExpectedHostname || result.hostname === config.turnstileExpectedHostname);
+      return result.success === true && result.action === "contact" && result.hostname === config.turnstileExpectedHostname;
     } catch { return false; } finally { clearTimeout(timeout); }
   };
 }

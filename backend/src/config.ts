@@ -11,7 +11,7 @@ export interface AppConfig {
   emailReportTo: string;
   productionOrigin: string;
   turnstileSecret: string;
-  turnstileExpectedHostname?: string;
+  turnstileExpectedHostname: string;
   turnstileTimeoutMs?: number;
   trustProxy: boolean;
   rateLimitMax: number;
@@ -83,6 +83,8 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
     throw new ConfigError("NODE_ENV must be development, test, or production");
   }
 
+  const productionOrigin = origin(env);
+
   return {
     nodeEnv,
     port: integer(env, "PORT", 3000),
@@ -92,10 +94,11 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
     smtpPass: required(env, "SMTP_PASS"),
     emailFrom: email(env, "EMAIL_FROM"),
     emailReportTo: email(env, "EMAIL_REPORT_TO"),
-    productionOrigin: origin(env),
+    productionOrigin,
     turnstileSecret:
       env.TURNSTILE_SECRET_KEY?.trim() || CLOUDFLARE_TEST_TURNSTILE_SECRET,
-    turnstileExpectedHostname: env.TURNSTILE_EXPECTED_HOSTNAME?.trim() || undefined,
+    turnstileExpectedHostname:
+      env.TURNSTILE_EXPECTED_HOSTNAME?.trim() || new URL(productionOrigin).hostname,
     turnstileTimeoutMs: integer(env, "TURNSTILE_TIMEOUT_MS", 5_000),
     trustProxy: boolean(env, "TRUST_PROXY", false),
     rateLimitMax: integer(env, "RATE_LIMIT_MAX", 5),

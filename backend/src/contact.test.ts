@@ -17,6 +17,7 @@ const config: AppConfig = {
   emailReportTo: "team@example.test",
   productionOrigin: "https://example.test",
   turnstileSecret: "turnstile-secret",
+  turnstileExpectedHostname: "example.test",
   trustProxy: false,
   rateLimitMax: 2,
   rateLimitWindowMs: 60_000,
