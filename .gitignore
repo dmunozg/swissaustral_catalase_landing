@@ -3,6 +3,7 @@ dist/
 .vite/
 *.log
 .DS_Store
+.playwright-cli/
 
 # Local visual-QC screenshots
 *-qc*.png
