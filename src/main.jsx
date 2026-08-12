@@ -213,7 +213,7 @@ function App() {
         <section className="hero-section" aria-labelledby="hero-title">
           <div className="hero-image" />
           <div className="hero-overlay" />
-          <ParticleField />
+          {/* <ParticleField /> */}
           <div className="hero-content page-container">
             {/* <SectionKicker light>SWISSAUSTRAL</SectionKicker> */}
             <p className="hero-product">COLD-ACTIVE CATALASE</p>
@@ -423,25 +423,25 @@ function App() {
             <div className="benefit-list">
               {[
                 [
-                  "01",
+                  "",
                   "Increase sensitivity",
                   "Generate a stronger response to changes in analyte concentration.",
                   "By managing peroxide and partially recovering oxygen, Cold-Active Catalase could support oxidase turnover and help increase the response produced for a given analyte concentration.",
                 ],
                 [
-                  "02",
+                  "",
                   "Extend the linear range",
                   "Maintain a proportional response across a broader analyte range.",
                   "Partial oxygen recovery could help the oxidase continue operating as analyte concentrations increase, potentially delaying early saturation or loss of linearity.",
                 ],
                 [
-                  "03",
+                  "",
                   "Lower the detection limit",
                   "Improve the ability to distinguish lower analyte concentrations.",
                   "By supporting a stronger analytical response, Cold-Active Catalase could help make low analyte concentrations easier to distinguish from the background signal.",
                 ],
                 [
-                  "04",
+                  "",
                   "Manage peroxide exposure",
                   "Remove a reactive by-product from the sensing layer.",
                   "Cold-Active Catalase could decompose oxidase-generated hydrogen peroxide, helping reduce peroxide exposure and maintain a more favourable environment around the immobilized enzymes.",
@@ -585,7 +585,7 @@ function App() {
             </div>
             <div className="why-bottom">
               <p>
-                These characteristics make Cold-Active Catalase worth evaluating
+                These characteristics make <em>Cold-Active Catalase</em> worth evaluating
                 as a peroxide-management component in your oxidase-based sensor.
               </p>
               <Button
@@ -674,7 +674,7 @@ function App() {
         <div className="page-container">
           <div className="footer-top">
             <SwissaustralMark light />
-            <span>Cold-Active Catalase / Oxidase-based biosensors</span>
+            <span>Cold-Active Catalase for Oxidase-based biosensors</span>
           </div>
           <p className="disclaimer">
             Potential outcomes are based on the catalase reaction and results
@@ -685,24 +685,8 @@ function App() {
             each sensor architecture.
           </p>
           <div className="footer-bottom">
-            <span>© Swissaustral · Prototype handoff</span>
-            <span>
-              <a href="https://doi.org/10.1002/elan.202300190">
-                Berketa et al., 2023
-              </a>{" "}
-              ·{" "}
-              <a href="https://doi.org/10.15407/biotech17.02.024">
-                Berketa et al., 2024
-              </a>{" "}
-              ·{" "}
-              <a href="https://doi.org/10.1177/193229681300700428">
-                Harris et al., 2013
-              </a>{" "}
-              ·{" "}
-              <a href="https://doi.org/10.1002/bit.260290607">
-                Tse &amp; Gough, 1987
-              </a>
-            </span>
+            <span>© Swissaustral · 2026</span>
+            
           </div>
         </div>
       </footer>
