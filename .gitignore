@@ -4,6 +4,10 @@ dist/
 *.log
 .DS_Store
 .playwright-cli/
+.env
+.env.*
+!.env.example
+!.env.*.example
 
 # Local visual-QC screenshots
 *-qc*.png
