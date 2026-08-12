@@ -12,6 +12,7 @@ export interface AppConfig {
   productionOrigin: string;
   turnstileSecret: string;
   turnstileExpectedHostname?: string;
+  turnstileTimeoutMs?: number;
   trustProxy: boolean;
   rateLimitMax: number;
   rateLimitWindowMs: number;
@@ -95,6 +96,7 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
     turnstileSecret:
       env.TURNSTILE_SECRET_KEY?.trim() || CLOUDFLARE_TEST_TURNSTILE_SECRET,
     turnstileExpectedHostname: env.TURNSTILE_EXPECTED_HOSTNAME?.trim() || undefined,
+    turnstileTimeoutMs: integer(env, "TURNSTILE_TIMEOUT_MS", 5_000),
     trustProxy: boolean(env, "TRUST_PROXY", false),
     rateLimitMax: integer(env, "RATE_LIMIT_MAX", 5),
     rateLimitWindowMs: integer(env, "RATE_LIMIT_WINDOW_MS", 600_000),
