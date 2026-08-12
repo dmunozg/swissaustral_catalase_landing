@@ -495,7 +495,7 @@ h3 em {
   position: absolute;
   right: 15px;
   bottom: 20px;
-  color: #b2bdc0;
+  color: #657278;
 }
 .section-cta {
   display: flex;
@@ -589,6 +589,8 @@ h3 em {
   color: rgba(229, 241, 243, 0.45);
 }
 .reaction-arrow {
+  display: grid;
+  grid-template-rows: auto 1fr;
   flex: 1 1 70px;
   color: #a4d4da;
   font-family: Montserrat, sans-serif;
@@ -607,9 +609,12 @@ h3 em {
   color: #e6282f;
   font-weight: 700;
 }
-.reaction-arrow-icon {
-  width: 17px;
-  height: 17px;
+.reaction-arrow::after {
+  content: "";
+  align-self: center;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0 45%, calc(100% - 8px) 45%, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, calc(100% - 8px) 55%, 0 55%);
 }
 .reaction-divider {
   display: flex;
