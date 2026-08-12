@@ -10,11 +10,8 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "autoprefixer": "latest",
-    "postcss": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "tailwindcss": "^3.4.17",
     "vite": "latest"
   },
   "devDependencies": {}
