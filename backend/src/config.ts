@@ -24,6 +24,12 @@ export type Environment = Record<string, string | undefined>;
 export const CLOUDFLARE_TEST_TURNSTILE_SECRET =
   "1x0000000000000000000000000000000AA";
 
+export const CLOUDFLARE_TEST_TURNSTILE_SECRETS: readonly string[] = [
+  CLOUDFLARE_TEST_TURNSTILE_SECRET,
+  "2x0000000000000000000000000000000AA",
+  "3x0000000000000000000000000000000AA",
+];
+
 export class ConfigError extends Error {
   constructor(message: string) {
     super(message);
@@ -95,7 +101,7 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
   const turnstileSecret = env.TURNSTILE_SECRET_KEY?.trim();
   if (
     (nodeEnv === "production" || production) &&
-    (!turnstileSecret || turnstileSecret === CLOUDFLARE_TEST_TURNSTILE_SECRET)
+    (!turnstileSecret || CLOUDFLARE_TEST_TURNSTILE_SECRETS.includes(turnstileSecret))
   ) {
     throw new ConfigError(
       "TURNSTILE_SECRET_KEY must be a non-test key when NODE_ENV is production or PRODUCTION is true",

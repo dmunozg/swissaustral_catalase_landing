@@ -1,5 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { ConfigError, loadConfig, type Environment } from "./config";
+import {
+  CLOUDFLARE_TEST_TURNSTILE_SECRETS,
+  ConfigError,
+  loadConfig,
+  type Environment,
+} from "./config";
 
 function environment(productionOrigin: string): Environment {
   return {
@@ -30,7 +35,7 @@ describe("configuration", () => {
     },
   );
 
-  test.each([undefined, "", "1x0000000000000000000000000000000AA"]) (
+  test.each([undefined, "", ...CLOUDFLARE_TEST_TURNSTILE_SECRETS]) (
     "rejects the test Turnstile secret in production",
     (turnstileSecret) => {
       expect(() =>
@@ -53,7 +58,7 @@ describe("configuration", () => {
     ).toBe("production-secret");
   });
 
-  test.each([undefined, "", "1x0000000000000000000000000000000AA"])(
+  test.each([undefined, "", ...CLOUDFLARE_TEST_TURNSTILE_SECRETS])(
     "rejects a missing or test Turnstile secret when NODE_ENV is production",
     (turnstileSecret) => {
       expect(() =>
