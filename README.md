@@ -41,9 +41,10 @@ Backend variables in `.env`:
 - `RATE_LIMIT_MAX` and `RATE_LIMIT_WINDOW_MS`: process-local submission limit.
 
 When `TURNSTILE_SECRET_KEY` is absent, the API uses Cloudflare's test secret.
-The frontend similarly falls back to Cloudflare's test site key when
-`VITE_TURNSTILE_SITE_KEY` is absent. Use real keys and a real hostname in
-production.
+During development, the frontend falls back to Cloudflare's test site key when
+`VITE_TURNSTILE_SITE_KEY` is absent. Production frontend builds require a real
+`VITE_TURNSTILE_SITE_KEY`; builds using the test key or no key fail instead of
+producing a nonfunctional contact form.
 
 ## Local startup
 

@@ -155,10 +155,19 @@ function App() {
   const turnstileContainerRef = useRef(null);
   const turnstileWidgetIdRef = useRef(null);
   const turnstileSiteKey =
-    import.meta.env.VITE_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE_KEY;
+    import.meta.env.VITE_TURNSTILE_SITE_KEY ||
+    (import.meta.env.DEV ? TURNSTILE_TEST_SITE_KEY : "");
   const isSubmitting = formState.status === "pending";
 
   useEffect(() => {
+    if (!turnstileSiteKey) {
+      setFormState({
+        status: "error",
+        message: "The security check could not be completed. Please try again.",
+      });
+      return undefined;
+    }
+
     let timer;
     const render = () => {
       if (!window.turnstile || !turnstileContainerRef.current) {
