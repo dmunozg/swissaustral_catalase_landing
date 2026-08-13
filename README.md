@@ -1,25 +1,27 @@
 # Swissaustral Contact API
 
 The project contains a Vite landing page in `frontend/` and a Bun contact API
-in `backend/`. The landing page submits to the same-origin `/api/contact`
-endpoint; the Vite development proxy forwards that path to Bun.
+in `backend/`. In development, the landing page sends contact requests directly
+to Bun; in production, it uses the same-origin `/api/contact` endpoint routed
+by Nginx.
 
 ## Environment
 
-Copy the examples before starting locally:
+Copy the root example before starting locally:
 
 ```sh
-cp frontend/.env.example frontend/.env
-cp backend/.env.example backend/.env
+cp .env.example .env
 ```
 
 Frontend variables:
 
 - `VITE_TURNSTILE_SITE_KEY`: public Cloudflare Turnstile site key. It is safe
   to expose in browser JavaScript. The example uses Cloudflare's test site key.
-- `BACKEND_URL`: Vite proxy target, normally `http://localhost:3000` locally.
+- `VITE_CONTACT_API_URL`: direct development API URL, normally
+  `http://127.0.0.1:3000/api/contact`. Leave it unset in production so the form
+  uses Nginx's same-origin `/api/contact` route.
 
-Backend variables in `backend/.env`:
+Backend variables in `.env`:
 
 - `PORT`: API port, default `3000`.
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`: SMTP credentials.
@@ -47,12 +49,14 @@ Run the services separately:
 
 ```sh
 # terminal 1
+set -a; source .env; set +a
 cd backend
 bun install
 bun run dev
 
 # terminal 2
 cd frontend
+set -a; source ../.env; set +a
 npm ci
 npm run dev
 ```

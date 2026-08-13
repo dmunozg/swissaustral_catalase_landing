@@ -1015,12 +1015,10 @@ h3 em {
   font-size: 9px;
 }
 .turnstile-wrap {
-  min-height: 65px;
-  max-width: 100%;
+  min-width: 300px;
+  min-height: 70px;
+  max-width: 500px;
   overflow: hidden;
-}
-.cf-turnstile {
-  min-height: 65px;
 }
 .form-message {
   margin: 0;

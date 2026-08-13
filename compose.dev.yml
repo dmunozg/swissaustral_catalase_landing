@@ -13,21 +13,21 @@ services:
       - frontend_node_modules:/app/frontend/node_modules
     environment:
       NODE_ENV: development
-      BACKEND_URL: http://backend:3000
+      VITE_CONTACT_API_URL: http://127.0.0.1:3000/api/contact
       VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
     init: true
 
   backend:
     image: oven/bun:1
     working_dir: /app/backend
-    command: bun run dev
+    command: ["/bin/sh", "-c", "bun install --frozen-lockfile && bun run dev"]
     ports:
       - "3000:3000"
     volumes:
       - .:/app:Z
       - backend_node_modules:/app/backend/node_modules
     env_file:
-      - path: ./backend/.env
+      - path: ./.env
         required: false
     init: true
 

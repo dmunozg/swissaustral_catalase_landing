@@ -70,6 +70,9 @@ describe("contact contract", () => {
     const response = await testSeams.handler(request());
 
     expect(response.status).toBe(200);
+    expect(response.headers.get("access-control-allow-origin")).toBe(
+      config.productionOrigin,
+    );
     expect(testSeams.verified).toBe(1);
     expect(testSeams.sent.map(({ kind }) => kind)).toEqual(["receipt", "report"]);
   });
@@ -91,6 +94,9 @@ describe("contact contract", () => {
     const response = await testSeams.handler(request());
 
     expect(response.status).toBe(403);
+    expect(response.headers.get("access-control-allow-origin")).toBe(
+      config.productionOrigin,
+    );
     expect(testSeams.sent).toHaveLength(0);
   });
 
@@ -100,6 +106,7 @@ describe("contact contract", () => {
     const response = await testSeams.handler(request(payload, "https://evil.example"));
 
     expect(response.status).toBe(403);
+    expect(response.headers.get("access-control-allow-origin")).toBeNull();
     expect(testSeams.verified).toBe(0);
     expect(testSeams.sent).toHaveLength(0);
   });

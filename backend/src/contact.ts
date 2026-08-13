@@ -44,8 +44,17 @@ const SECURITY_HEADERS = {
   "X-Frame-Options": "DENY",
 };
 
-function response(status: number, body: Record<string, string>): Response {
-  return Response.json(body, { status, headers: SECURITY_HEADERS });
+function response(
+  status: number,
+  body: Record<string, string>,
+  origin?: string,
+): Response {
+  const headers = new Headers(SECURITY_HEADERS);
+  if (origin) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Vary", "Origin");
+  }
+  return Response.json(body, { status, headers });
 }
 
 async function readJson(request: Request): Promise<unknown | null> {
@@ -151,16 +160,17 @@ export function createContactHandler(dependencies: ContactDependencies): Contact
   };
 
   return async (request) => {
+    const origin = request.headers.get("origin");
     if (request.method !== "POST" || new URL(request.url).pathname !== "/api/contact") {
       return response(404, { error: "Not found" });
     }
 
-    if (request.headers.get("origin") !== dependencies.config.productionOrigin) {
+    if (origin !== dependencies.config.productionOrigin) {
       return response(403, { error: "Forbidden" });
     }
 
     const payload = parseContactPayload(await readJson(request));
-    if (!payload) return response(400, { error: "Invalid request" });
+    if (!payload) return response(400, { error: "Invalid request" }, origin);
 
     const currentTime = now();
     const key = clientKey(request);
@@ -169,22 +179,22 @@ export function createContactHandler(dependencies: ContactDependencies): Contact
     const recent = (attempts.get(key) ?? []).filter((timestamp) => timestamp > cutoff);
     if (recent.length >= dependencies.config.rateLimitMax) {
       attempts.set(key, recent);
-      return response(429, { error: "Too many requests" });
+      return response(429, { error: "Too many requests" }, origin);
     }
     recent.push(currentTime);
     attempts.set(key, recent);
 
     if (!(await dependencies.verifyTurnstile(payload.turnstileToken, request))) {
-      return response(403, { error: "Unable to verify request" });
+      return response(403, { error: "Unable to verify request" }, origin);
     }
 
     try {
       await dependencies.sendMail({ kind: "receipt", payload });
       await dependencies.sendMail({ kind: "report", payload });
     } catch {
-      return response(500, { error: "Unable to send message" });
+      return response(500, { error: "Unable to send message" }, origin);
     }
 
-    return response(200, { message: "Message sent" });
+    return response(200, { message: "Message sent" }, origin);
   };
 }

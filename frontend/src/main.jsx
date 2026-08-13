@@ -53,6 +53,7 @@ const metrics = [
 ];
 
 const TURNSTILE_TEST_SITE_KEY = "1x00000000000000000000AA";
+const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || "/api/contact";
 
 function SwissaustralMark({ light = false }) {
   return (
@@ -151,46 +152,62 @@ function ParticleField() {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [formState, setFormState] = useState({ status: "idle", message: "" });
+  const turnstileContainerRef = useRef(null);
+  const turnstileWidgetIdRef = useRef(null);
   const turnstileSiteKey =
     import.meta.env.VITE_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE_KEY;
   const isSubmitting = formState.status === "pending";
 
   useEffect(() => {
-    const previousErrorCallback = window.contactTurnstileError;
-    const previousExpiredCallback = window.contactTurnstileExpired;
-    window.contactTurnstileError = () =>
-      setFormState({
-        status: "error",
-        message: "The security check could not be completed. Please try again.",
-      });
-    window.contactTurnstileExpired = () =>
-      setFormState({
-        status: "error",
-        message: "The security check expired. Please complete it again.",
-      });
-    return () => {
-      if (previousErrorCallback) {
-        window.contactTurnstileError = previousErrorCallback;
-      } else {
-        delete window.contactTurnstileError;
+    let timer;
+    const render = () => {
+      if (!window.turnstile || !turnstileContainerRef.current) {
+        timer = window.setTimeout(render, 50);
+        return;
       }
-      if (previousExpiredCallback) {
-        window.contactTurnstileExpired = previousExpiredCallback;
-      } else {
-        delete window.contactTurnstileExpired;
+      turnstileWidgetIdRef.current = window.turnstile.render(
+        turnstileContainerRef.current,
+        {
+          sitekey: turnstileSiteKey,
+          action: "contact",
+          size: "flexible",
+          theme: "light",
+          "error-callback": () =>
+            setFormState({
+              status: "error",
+              message: "The security check could not be completed. Please try again.",
+            }),
+          "expired-callback": () =>
+            setFormState({
+              status: "error",
+              message: "The security check expired. Please complete it again.",
+            }),
+        },
+      );
+    };
+
+    render();
+    return () => {
+      window.clearTimeout(timer);
+      if (turnstileWidgetIdRef.current !== null && window.turnstile) {
+        window.turnstile.remove(turnstileWidgetIdRef.current);
       }
     };
-  }, []);
+  }, [turnstileSiteKey]);
 
   const resetTurnstile = () => {
-    if (typeof window.turnstile?.reset === "function") window.turnstile.reset();
+    if (turnstileWidgetIdRef.current !== null && window.turnstile) {
+      window.turnstile.reset(turnstileWidgetIdRef.current);
+    }
   };
 
   const submitContactForm = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const values = Object.fromEntries(new FormData(form).entries());
-    const turnstileToken = values["cf-turnstile-response"];
+    const turnstileToken = turnstileWidgetIdRef.current === null
+      ? undefined
+      : window.turnstile?.getResponse(turnstileWidgetIdRef.current);
 
     if (typeof turnstileToken !== "string" || !turnstileToken) {
       setFormState({
@@ -202,7 +219,7 @@ function App() {
 
     setFormState({ status: "pending", message: "Sending your message…" });
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(CONTACT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -754,15 +771,7 @@ function App() {
                   />
                 </label>
                 <div className="turnstile-wrap">
-                  <div
-                    className="cf-turnstile"
-                    data-sitekey={turnstileSiteKey}
-                    data-action="contact"
-                    data-theme="light"
-                    data-error-callback="contactTurnstileError"
-                    data-expired-callback="contactTurnstileExpired"
-                    aria-label="Security check"
-                  />
+                  <div ref={turnstileContainerRef} aria-label="Security check" />
                 </div>
                 <div className="form-foot">
                   <span>Protected by Cloudflare Turnstile</span>

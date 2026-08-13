@@ -36,5 +36,28 @@ const contact = createContactHandler({
 });
 const securityHeaders = { "Cache-Control": "no-store", "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'", "Cross-Origin-Resource-Policy": "same-origin", "Referrer-Policy": "no-referrer", "X-Content-Type-Options": "nosniff", "X-Frame-Options": "DENY" };
 
-server = Bun.serve({ port: config.port, async fetch(request) { if (new URL(request.url).pathname === "/api/contact") return contact(request); return new Response("Not found", { status: 404, headers: securityHeaders }); } });
+server = Bun.serve({
+  port: config.port,
+  async fetch(request) {
+    const path = new URL(request.url).pathname;
+    const origin = request.headers.get("origin");
+    if (path === "/api/contact" && request.method === "OPTIONS") {
+      if (origin !== config.productionOrigin) {
+        return new Response(null, { status: 403, headers: securityHeaders });
+      }
+      return new Response(null, {
+        status: 204,
+        headers: {
+          ...securityHeaders,
+          "Access-Control-Allow-Origin": origin,
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "POST",
+          Vary: "Origin",
+        },
+      });
+    }
+    if (path === "/api/contact") return contact(request);
+    return new Response("Not found", { status: 404, headers: securityHeaders });
+  },
+});
 console.log(`Contact API listening on ${server.port ?? config.port}`);
