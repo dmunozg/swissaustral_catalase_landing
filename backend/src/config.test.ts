@@ -53,6 +53,29 @@ describe("configuration", () => {
     ).toBe("production-secret");
   });
 
+  test.each([undefined, "", "1x0000000000000000000000000000000AA"])(
+    "rejects a missing or test Turnstile secret when NODE_ENV is production",
+    (turnstileSecret) => {
+      expect(() =>
+        loadConfig({
+          ...environment("https://example.test/"),
+          NODE_ENV: "production",
+          TURNSTILE_SECRET_KEY: turnstileSecret,
+        }),
+      ).toThrow(ConfigError);
+    },
+  );
+
+  test("accepts a non-test Turnstile secret when NODE_ENV is production", () => {
+    expect(
+      loadConfig({
+        ...environment("https://example.test/"),
+        NODE_ENV: "production",
+        TURNSTILE_SECRET_KEY: "production-secret",
+      }).turnstileSecret,
+    ).toBe("production-secret");
+  });
+
   test("uses the Turnstile test secret outside production", () => {
     expect(
       loadConfig(environment("https://example.test/")).turnstileSecret,

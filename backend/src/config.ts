@@ -94,11 +94,11 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
   const production = boolean(env, "PRODUCTION", false);
   const turnstileSecret = env.TURNSTILE_SECRET_KEY?.trim();
   if (
-    production &&
+    (nodeEnv === "production" || production) &&
     (!turnstileSecret || turnstileSecret === CLOUDFLARE_TEST_TURNSTILE_SECRET)
   ) {
     throw new ConfigError(
-      "TURNSTILE_SECRET_KEY must be a non-test key when PRODUCTION is true",
+      "TURNSTILE_SECRET_KEY must be a non-test key when NODE_ENV is production or PRODUCTION is true",
     );
   }
 
