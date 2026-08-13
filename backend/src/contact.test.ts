@@ -8,6 +8,7 @@ import {
 
 const config: AppConfig = {
   nodeEnv: "test",
+  production: false,
   port: 3000,
   smtpHost: "smtp.example.test",
   smtpPort: 587,

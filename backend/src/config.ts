@@ -2,6 +2,7 @@ export type NodeEnvironment = "development" | "test" | "production";
 
 export interface AppConfig {
   nodeEnv: NodeEnvironment;
+  production: boolean;
   port: number;
   smtpHost: string;
   smtpPort: number;
@@ -90,9 +91,20 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
   }
 
   const productionOrigin = origin(env);
+  const production = boolean(env, "PRODUCTION", false);
+  const turnstileSecret = env.TURNSTILE_SECRET_KEY?.trim();
+  if (
+    production &&
+    (!turnstileSecret || turnstileSecret === CLOUDFLARE_TEST_TURNSTILE_SECRET)
+  ) {
+    throw new ConfigError(
+      "TURNSTILE_SECRET_KEY must be a non-test key when PRODUCTION is true",
+    );
+  }
 
   return {
     nodeEnv,
+    production,
     port: integer(env, "PORT", 3000),
     smtpHost: required(env, "SMTP_HOST"),
     smtpPort: integer(env, "SMTP_PORT", 587),
@@ -101,8 +113,7 @@ export function loadConfig(env: Environment = Bun.env): AppConfig {
     emailFrom: email(env, "EMAIL_FROM"),
     emailReportTo: email(env, "EMAIL_REPORT_TO"),
     productionOrigin,
-    turnstileSecret:
-      env.TURNSTILE_SECRET_KEY?.trim() || CLOUDFLARE_TEST_TURNSTILE_SECRET,
+    turnstileSecret: turnstileSecret || CLOUDFLARE_TEST_TURNSTILE_SECRET,
     turnstileExpectedHostname:
       env.TURNSTILE_EXPECTED_HOSTNAME?.trim() || new URL(productionOrigin).hostname,
     turnstileTimeoutMs: integer(env, "TURNSTILE_TIMEOUT_MS", 5_000),

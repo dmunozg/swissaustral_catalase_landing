@@ -29,4 +29,33 @@ describe("configuration", () => {
       );
     },
   );
+
+  test.each([undefined, "", "1x0000000000000000000000000000000AA"]) (
+    "rejects the test Turnstile secret in production",
+    (turnstileSecret) => {
+      expect(() =>
+        loadConfig({
+          ...environment("https://example.test/"),
+          PRODUCTION: "true",
+          TURNSTILE_SECRET_KEY: turnstileSecret,
+        }),
+      ).toThrow(ConfigError);
+    },
+  );
+
+  test("accepts a non-test Turnstile secret in production", () => {
+    expect(
+      loadConfig({
+        ...environment("https://example.test/"),
+        PRODUCTION: "true",
+        TURNSTILE_SECRET_KEY: "production-secret",
+      }).turnstileSecret,
+    ).toBe("production-secret");
+  });
+
+  test("uses the Turnstile test secret outside production", () => {
+    expect(
+      loadConfig(environment("https://example.test/")).turnstileSecret,
+    ).toBe("1x0000000000000000000000000000000AA");
+  });
 });

@@ -24,6 +24,8 @@ Frontend variables:
 Backend variables in `.env`:
 
 - `PORT`: API port, default `3000`.
+- `PRODUCTION`: set to `true` only in production. It requires a configured,
+  non-test `TURNSTILE_SECRET_KEY` at startup.
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`: SMTP credentials.
 - `EMAIL_FROM`: verified sender address.
 - `EMAIL_REPORT_TO`: address that receives contact reports.
