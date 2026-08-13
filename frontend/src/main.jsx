@@ -52,6 +52,9 @@ const metrics = [
   },
 ];
 
+const TURNSTILE_TEST_SITE_KEY = "1x00000000000000000000AA";
+const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || "/api/contact";
+
 function SwissaustralMark({ light = false }) {
   return (
     <img
@@ -148,7 +151,119 @@ function ParticleField() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [formState, setFormState] = useState({ status: "idle", message: "" });
+  const turnstileContainerRef = useRef(null);
+  const turnstileWidgetIdRef = useRef(null);
+  const turnstileSiteKey =
+    import.meta.env.VITE_TURNSTILE_SITE_KEY ||
+    (import.meta.env.DEV ? TURNSTILE_TEST_SITE_KEY : "");
+  const isSubmitting = formState.status === "pending";
+
+  useEffect(() => {
+    if (!turnstileSiteKey) {
+      setFormState({
+        status: "error",
+        message: "The security check could not be completed. Please try again.",
+      });
+      return undefined;
+    }
+
+    let timer;
+    const render = () => {
+      if (!window.turnstile || !turnstileContainerRef.current) {
+        timer = window.setTimeout(render, 50);
+        return;
+      }
+      turnstileWidgetIdRef.current = window.turnstile.render(
+        turnstileContainerRef.current,
+        {
+          sitekey: turnstileSiteKey,
+          action: "contact",
+          size: "flexible",
+          theme: "light",
+          "error-callback": () =>
+            setFormState({
+              status: "error",
+              message: "The security check could not be completed. Please try again.",
+            }),
+          "expired-callback": () =>
+            setFormState({
+              status: "error",
+              message: "The security check expired. Please complete it again.",
+            }),
+        },
+      );
+    };
+
+    render();
+    return () => {
+      window.clearTimeout(timer);
+      if (turnstileWidgetIdRef.current !== null && window.turnstile) {
+        window.turnstile.remove(turnstileWidgetIdRef.current);
+      }
+    };
+  }, [turnstileSiteKey]);
+
+  const resetTurnstile = () => {
+    if (turnstileWidgetIdRef.current !== null && window.turnstile) {
+      window.turnstile.reset(turnstileWidgetIdRef.current);
+    }
+  };
+
+  const submitContactForm = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = Object.fromEntries(new FormData(form).entries());
+    const turnstileToken = turnstileWidgetIdRef.current === null
+      ? undefined
+      : window.turnstile?.getResponse(turnstileWidgetIdRef.current);
+
+    if (typeof turnstileToken !== "string" || !turnstileToken) {
+      setFormState({
+        status: "error",
+        message: "Please complete the security check before sending your message.",
+      });
+      return;
+    }
+
+    setFormState({ status: "pending", message: "Sending your message…" });
+    try {
+      const response = await fetch(CONTACT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          message: values.message,
+          turnstileToken,
+        }),
+      });
+
+      if (!response.ok) {
+        setFormState({
+          status: "error",
+          message:
+            response.status === 429
+              ? "Too many attempts. Please wait a few minutes and try again."
+              : "We could not send your message. Please check your details and try again.",
+        });
+        return;
+      }
+
+      form.reset();
+      setFormState({
+        status: "success",
+        message: "Thank you — your message has been sent. We’ll be in touch soon.",
+      });
+    } catch {
+      setFormState({
+        status: "error",
+        message: "We could not reach the contact service. Please try again shortly.",
+      });
+    } finally {
+      resetTurnstile();
+    }
+  };
 
   const closeMenu = () => setMenuOpen(false);
   const goTo = (id) => (event) => {
@@ -643,41 +758,53 @@ function App() {
             <Reveal className="contact-form-wrap">
               <form
                 className="contact-form"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  setSubmitted(true);
-                }}
+                onSubmit={submitContactForm}
+                aria-busy={isSubmitting}
               >
                 <label>
                   Name
-                  <input type="text" placeholder="Your name" required />
+                  <input name="name" type="text" placeholder="Your name" maxLength="100" required />
                 </label>
                 <label>
                   Email
-                  <input type="email" placeholder="you@company.com" required />
+                  <input name="email" type="email" placeholder="you@company.com" maxLength="254" required />
                 </label>
                 <label>
                   How can we help?
                   <textarea
+                    name="message"
                     rows="4"
+                    maxLength="5000"
                     placeholder="Tell us briefly about your sensor, application, or the technical information you need."
                     required
                   />
                 </label>
+                <div className="turnstile-wrap">
+                  <div ref={turnstileContainerRef} aria-label="Security check" />
+                </div>
                 <div className="form-foot">
-                  <span>Cloudflare Turnstile placeholder</span>
-                  <button type="submit" className="button button--light">
-                    {submitted
-                      ? "Message staged"
-                      : "Start a technical conversation"}
+                  <span>Protected by Cloudflare Turnstile</span>
+                  <button
+                    type="submit"
+                    className="button button--light"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting
+                      ? "Sending…"
+                      : formState.status === "success"
+                        ? "Send another message"
+                        : "Start a technical conversation"}
                     <ArrowUpRight className="arrow-icon" aria-hidden="true" />
                   </button>
                 </div>
-                {submitted && (
-                  <p className="form-success" role="status">
-                    Thank you — this prototype has staged your message locally.
-                  </p>
-                )}
+                <p
+                  id="contact-form-status"
+                  className={`form-message form-message--${formState.status}`}
+                  role={formState.status === "error" ? "alert" : "status"}
+                  aria-live="polite"
+                >
+                  {formState.message}
+                </p>
               </form>
             </Reveal>
           </div>

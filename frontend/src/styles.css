@@ -344,6 +344,11 @@ h3 {
 .button:hover {
   transform: translateY(-2px);
 }
+.button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
 .button--light {
   color: #0c202b;
   background: #fbfaf7;
@@ -1009,10 +1014,25 @@ h3 em {
   color: #9ca6a7;
   font-size: 9px;
 }
-.form-success {
+.turnstile-wrap {
+  min-width: 300px;
+  min-height: 70px;
+  max-width: 500px;
+  overflow: hidden;
+}
+.form-message {
   margin: 0;
-  color: #0c6e79;
   font-size: 12px;
+  line-height: 1.5;
+}
+.form-message--success {
+  color: #0c6e79;
+}
+.form-message--error {
+  color: #b21f26;
+}
+.form-message--pending {
+  color: #657278;
 }
 .contact-orbit {
   position: absolute;
