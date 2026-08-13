@@ -7,7 +7,7 @@ by Nginx.
 
 ## Environment
 
-Copy the root example before starting locally:
+Copy the root example before starting locally or in production:
 
 ```sh
 cp .env.example .env
@@ -16,16 +16,22 @@ cp .env.example .env
 Frontend variables:
 
 - `VITE_TURNSTILE_SITE_KEY`: public Cloudflare Turnstile site key. It is safe
-  to expose in browser JavaScript. The example uses Cloudflare's test site key.
+  to expose in browser JavaScript. Use a test site key only for local
+  development; production requires the real site key.
 - `VITE_CONTACT_API_URL`: direct development API URL, normally
   `http://127.0.0.1:3000/api/contact`. Leave it unset in production so the form
   uses Nginx's same-origin `/api/contact` route.
+
+For production, set `VITE_TURNSTILE_SITE_KEY` to the real public Turnstile site
+key. Do not use Cloudflare test values. The production frontend image receives
+this value only at build time.
 
 Backend variables in `.env`:
 
 - `PORT`: API port, default `3000`.
 - `PRODUCTION`: set to `true` only in production. It requires a configured,
   non-test `TURNSTILE_SECRET_KEY` at startup.
+- `NODE_ENV`: set to `production` for the production Compose stack.
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`: SMTP credentials.
 - `EMAIL_FROM`: verified sender address.
 - `EMAIL_REPORT_TO`: address that receives contact reports.
@@ -40,15 +46,17 @@ Backend variables in `.env`:
   `X-Forwarded-For` before forwarding to Bun.
 - `RATE_LIMIT_MAX` and `RATE_LIMIT_WINDOW_MS`: process-local submission limit.
 
-When `TURNSTILE_SECRET_KEY` is absent, the API uses Cloudflare's test secret.
-During development, the frontend falls back to Cloudflare's test site key when
-`VITE_TURNSTILE_SITE_KEY` is absent. Production frontend builds require a real
-`VITE_TURNSTILE_SITE_KEY`; builds using the test key or no key fail instead of
-producing a nonfunctional contact form.
+During development, the API may use Cloudflare's test secret and the frontend
+may fall back to Cloudflare's test site key when those values are absent. The
+production stack rejects missing or test Turnstile credentials and requires a
+real `VITE_TURNSTILE_SITE_KEY` at image build time.
 
 ## Local startup
 
-Run the services separately:
+For local development, set `NODE_ENV=development`, `PRODUCTION=false`,
+`PRODUCTION_ORIGIN=http://localhost:5173`, and `TRUST_PROXY=false` in `.env`.
+Use local/test Turnstile values and valid development SMTP settings. Then run
+the services separately:
 
 ```sh
 # terminal 1
@@ -73,6 +81,33 @@ docker compose -f compose.dev.yml up
 The frontend is available at <http://localhost:5173> and Bun at
 <http://localhost:3000>. Compose supplies the Cloudflare test site key unless
 `VITE_TURNSTILE_SITE_KEY` is set in the shell or an env file.
+
+## Production startup and operations
+
+Use the default `compose.yml` for production. First copy `.env.example` to
+`.env` and replace every placeholder with real Turnstile and SMTP credentials.
+The production origin must remain:
+`https://biosensors.swissaustral.com`.
+
+```sh
+# Validate the resolved production configuration.
+docker compose config --quiet
+
+# Build images and start Nginx plus the internal Bun API.
+docker compose up --build -d
+
+# Stop and remove the production containers and network.
+docker compose down
+```
+
+Only Nginx publishes host port 80; Bun is reachable through Compose networking
+only. TLS terminates at the external proxy and is out of scope for this
+repository. Configure the host firewall to allow port 80 only from that proxy.
+
+Because production sets `TRUST_PROXY=true`, the external proxy must overwrite
+`X-Forwarded-For` (not append to it) before forwarding requests to Nginx. Do
+not expose port 80 to arbitrary clients; the firewall restriction and proxy
+overwrite are the trust boundary for the client address used by rate limiting.
 
 ## SMTP and TLS
 
