@@ -1,8 +1,7 @@
 import { loadConfig } from "./config";
 import { createContactHandler } from "./contact";
 import { createMailer } from "./email";
-
-interface TurnstileResponse { success?: boolean; action?: string; hostname?: string }
+import { isTurnstileResponseValid } from "./turnstile";
 
 export function createTurnstileVerifier(config: ReturnType<typeof loadConfig>) {
   return async (token: string, request: Request): Promise<boolean> => {
@@ -14,8 +13,7 @@ export function createTurnstileVerifier(config: ReturnType<typeof loadConfig>) {
       if (clientIp) form.set("remoteip", clientIp);
       const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: form, signal: controller.signal });
       if (!response.ok) return false;
-      const result = (await response.json()) as TurnstileResponse;
-      return result.success === true && result.action === "contact" && result.hostname === config.turnstileExpectedHostname;
+      return isTurnstileResponseValid(await response.json(), config);
     } catch { return false; } finally { clearTimeout(timeout); }
   };
 }
