@@ -17,7 +17,7 @@
 - Pre-render the landing content into `dist/index.html` at build time.
 - Preserve React interactivity through hydration.
 - Add canonical, Open Graph, Twitter, and truthful JSON-LD metadata.
-- Target "Cold-Active Catalase for oxidase-based biosensors" in the H1.
+- Preserve the existing hero H1: "Your oxidase sensor may be running out of room." Keyword targeting is provided by the title, description, structured data, and page body.
 - Copy the live favicon into this project and reference it with the Vite base path.
 - Link the top-bar and footer Swissaustral logos to `https://www.swissaustral.com`.
 - Add a focused build-output regression test.
@@ -33,7 +33,7 @@
 - [ ] Client JavaScript hydrates the pre-rendered page without changing behavior.
 - [ ] Canonical URL is `https://swissaustral.com/biosensors/`.
 - [ ] Metadata includes title, description, Open Graph, Twitter, JSON-LD, and favicon links.
-- [ ] The H1 includes the product and target application.
+- [ ] The H1 remains "Your oxidase sensor may be running out of room."
 - [ ] Both rendered logo links use `https://www.swissaustral.com`.
 - [ ] The SEO build-output test passes after a production build.
 
@@ -74,7 +74,7 @@
 
 **Steps:**
 1. Add a Node built-in test that reads `frontend/dist/index.html`.
-2. Assert the rendered root includes the target H1.
+2. Assert the rendered root includes the established hero H1.
 3. Assert canonical, title, description, Open Graph, Twitter, JSON-LD, favicon, and both external logo links.
 4. Run the test against the current build to confirm failure due to the empty root and missing tags.
 
@@ -139,7 +139,7 @@
 4. Replace the short description with: `Swissaustral Cold-Active Catalase for oxidase-based biosensors: manage hydrogen peroxide, recover oxygen, and evaluate sensor performance.`
 5. Add canonical, Open Graph, and Twitter metadata using `https://swissaustral.com/biosensors/` and the existing Patagonia hero as the share image.
 6. Add one truthful JSON-LD graph for `Organization`, `WebPage`, and `Product`; do not add price, availability, reviews, or unsupported performance claims.
-7. Change the H1 to include `Cold-Active Catalase` and `oxidase-based biosensors` naturally.
+7. Preserve the established H1: `Your oxidase sensor may be running out of room.`
 8. Extend the build-output test for the final metadata values.
 
 **Non-goals:**

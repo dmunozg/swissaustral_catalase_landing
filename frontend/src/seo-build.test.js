@@ -26,7 +26,7 @@ test("built root contains crawlable landing-page content", () => {
   assert.ok(root, "built HTML should contain the rendered root");
   assert.match(
     root,
-    /<h1[^>]*>\s*Cold-Active Catalase for oxidase-based biosensors\s*<\/h1>/,
+    /<h1[^>]*>\s*Your oxidase sensor may be running out of room\.\s*<\/h1>/,
   );
 });
 
