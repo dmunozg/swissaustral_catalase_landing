@@ -334,7 +334,7 @@ export function App() {
             {/* <SectionKicker light>SWISSAUSTRAL</SectionKicker> */}
             <p className="hero-product">COLD-ACTIVE CATALASE</p>
             <h1 id="hero-title">
-              Your oxidase sensor may be running out of room.
+              Cold-Active Catalase for oxidase-based biosensors
             </h1>
             <p className="hero-subtitle">
               Manage peroxide. Recover oxygen. Give your biosensor more room to
