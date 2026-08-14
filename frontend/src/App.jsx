@@ -872,7 +872,7 @@ export function MetricCard({ metric }) {
             <i style={{ "--bar-width": `${(metric.before / max) * 100}%` }} />
           </div>
           <b>
-            {metric.before.toLocaleString()} <small>{metric.unit}</small>
+            {metric.before.toLocaleString("en-US")} <small>{metric.unit}</small>
           </b>
         </div>
         <div className="bar-line bar-line--accent">
@@ -881,7 +881,7 @@ export function MetricCard({ metric }) {
             <i style={{ "--bar-width": `${(metric.after / max) * 100}%` }} />
           </div>
           <b>
-            {metric.after.toLocaleString()} <small>{metric.unit}</small>
+            {metric.after.toLocaleString("en-US")} <small>{metric.unit}</small>
           </b>
         </div>
       </div>
