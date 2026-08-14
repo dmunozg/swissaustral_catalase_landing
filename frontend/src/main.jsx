@@ -785,7 +785,6 @@ function App() {
                   <div ref={turnstileContainerRef} aria-label="Security check" />
                 </div>
                 <div className="form-foot">
-                  <span>Protected by Cloudflare Turnstile</span>
                   <button
                     type="submit"
                     className="button button--accent"

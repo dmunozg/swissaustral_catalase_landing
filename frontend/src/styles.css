@@ -325,15 +325,15 @@ h3 {
   transform: translate(3px, -3px);
 }
 .button {
-  min-height: 47px;
-  padding: 0 19px;
+  min-height: 54px;
+  padding: 0 24px;
   border: 1px solid transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 15px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 0.875rem;
   font-weight: 700;
   transition:
     background 0.2s,
@@ -524,6 +524,16 @@ h3 em {
 .section-cta > span {
   color: #8b9699;
   font-size: 12px;
+}
+
+@media (max-width: 679px) {
+  .mobile-menu__inner .button,
+  .section-cta .button,
+  .mechanism-bottom .button,
+  .why-bottom .button,
+  .form-foot .button {
+    width: 100%;
+  }
 }
 
 .mechanism-section {
@@ -1017,8 +1027,7 @@ h3 em {
 }
 .form-foot {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
   gap: 18px;
   margin-top: 8px;
 }
@@ -1227,7 +1236,6 @@ h3 em {
   .form-foot {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
   }
   .footer-bottom {
     flex-direction: row;
