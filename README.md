@@ -203,6 +203,21 @@ curl --fail --silent --show-error --head \
   https://swissaustral.com/biosensors/assets/<generated-asset-file>
 ```
 
+In the browser's network panel, a contact submission must show
+`POST /biosensors/api/contact`. Traefik must forward that request upstream as
+`/api/contact`, preserving the method and body. The Traefik operator must use
+the dashboard and application/proxy logs to verify that the file-provider
+router is active, the frontend upstream is healthy, TLS is valid, this router
+wins over any general Swissaustral router, and forwarded client information is
+sanitized (the proxy overwrites `X-Forwarded-For` rather than appending a
+browser-supplied value).
+
+Successful contact-form validation requires the real deployed Turnstile site
+and secret configuration for `swissaustral.com`; it cannot be performed from
+this repository. The checks above and the browser-network check are an
+external operator handoff, not repository verification, and no external
+results are claimed here.
+
 ## Production proxy requirements
 
 Expose only the frontend/proxy publicly. Route public
