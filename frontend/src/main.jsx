@@ -53,7 +53,9 @@ const metrics = [
 ];
 
 const TURNSTILE_TEST_SITE_KEY = "1x00000000000000000000AA";
-const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || "/api/contact";
+const CONTACT_API_URL =
+  import.meta.env.VITE_CONTACT_API_URL ||
+  `${import.meta.env.BASE_URL}api/contact`;
 
 function SwissaustralMark({ light = false }) {
   return (
@@ -61,8 +63,8 @@ function SwissaustralMark({ light = false }) {
       className={`brand-logo-image ${light ? "brand-logo-image--light" : ""}`}
       src={
         light
-          ? "/assets/swissaustral-logo-light.png"
-          : "/assets/swissaustral-logo-dark.png"
+          ? `${import.meta.env.BASE_URL}assets/swissaustral-logo-light.png`
+          : `${import.meta.env.BASE_URL}assets/swissaustral-logo-dark.png`
       }
       alt="Swissaustral"
     />

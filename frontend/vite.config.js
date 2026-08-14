@@ -22,6 +22,7 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
+    base: command === "build" ? "/biosensors/" : "/",
     server: {
       allowedHosts: ["vesuvio3", "localhost"],
     },
