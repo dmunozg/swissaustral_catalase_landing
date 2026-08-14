@@ -1114,14 +1114,14 @@ h3 em {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.reveal {
+.js .reveal {
   opacity: 0;
   transform: translateY(24px);
   transition:
     opacity 0.75s ease,
     transform 0.75s ease;
 }
-.reveal--visible {
+.js .reveal--visible {
   opacity: 1;
   transform: translateY(0);
 }
