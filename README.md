@@ -2,8 +2,10 @@
 
 The project contains a Vite landing page in `frontend/` and a Bun contact API
 in `backend/`. In development, the landing page sends contact requests directly
-to Bun; in production, it uses the same-origin `/api/contact` endpoint routed
-by Nginx.
+to Bun; in production, it is public at
+`https://swissaustral.com/biosensors/`. The browser uses
+`/biosensors/api/contact`; external Traefik strips `/biosensors` before Nginx
+routes the request to the existing `/api/contact` endpoint.
 
 ## Environment
 
@@ -20,11 +22,14 @@ Frontend variables:
   development; production requires the real site key.
 - `VITE_CONTACT_API_URL`: direct development API URL, normally
   `http://127.0.0.1:3000/api/contact`. Leave it unset in production so the form
-  uses Nginx's same-origin `/api/contact` route.
+  uses the same-origin `/biosensors/api/contact` route.
 
 For production, set `VITE_TURNSTILE_SITE_KEY` to the real public Turnstile site
-key. Do not use Cloudflare test values. The production frontend image receives
-this value only at build time.
+key configured for `swissaustral.com`. Do not use Cloudflare test values. The
+production frontend image receives this value only at build time. The matching
+real secret key belongs in `TURNSTILE_SECRET_KEY`; the production widget and
+secret must be one site/secret pair, and the widget must allow the
+`swissaustral.com` hostname.
 
 Backend variables in `.env`:
 
@@ -86,8 +91,8 @@ The frontend is available at <http://localhost:5173> and Bun at
 
 Use the default `compose.yml` for production. First copy `.env.example` to
 `.env` and replace every placeholder with real Turnstile and SMTP credentials.
-The production origin must remain:
-`https://biosensors.swissaustral.com`.
+The production origin must remain `https://swissaustral.com`; the public
+frontend route is `https://swissaustral.com/biosensors/`.
 
 ```sh
 # Validate the resolved production configuration.
@@ -102,7 +107,8 @@ docker compose down
 
 Only Nginx publishes host port 80; Bun is reachable through Compose networking
 only. TLS terminates at the external proxy and is out of scope for this
-repository. Configure the host firewall to allow port 80 only from that proxy.
+repository. Configure the application host firewall to allow port 80 only
+from the Traefik VM.
 
 Because production sets `TRUST_PROXY=true`, the external proxy must overwrite
 `X-Forwarded-For` (not append to it) before forwarding requests to Nginx. Do
@@ -118,12 +124,93 @@ verification. The API does not queue or retry mail; a successful request means
 both the sender receipt and the internal report were accepted by the SMTP
 transport.
 
+## External Traefik file-provider setup
+
+Traefik runs on a separate VM and is not configured or deployed by this
+repository. Enable its file provider in the Traefik **static** configuration:
+
+```yaml
+providers:
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+```
+
+Create a dynamic file in that directory. This example routes both `/biosensors`
+and `/biosensors/` to the production frontend and removes the public prefix
+before the existing Nginx service receives the request:
+
+```yaml
+http:
+  middlewares:
+    biosensors-strip-prefix:
+      stripPrefix:
+        prefixes:
+          - /biosensors
+
+  routers:
+    biosensors:
+      entryPoints:
+        - websecure
+      rule: "Host(`swissaustral.com`) && (Path(`/biosensors`) || PathPrefix(`/biosensors/`))"
+      middlewares:
+        - biosensors-strip-prefix
+      service: biosensors
+      tls:
+        certResolver: <existing-certificate-resolver>
+
+  services:
+    biosensors:
+      loadBalancer:
+        servers:
+          - url: "http://<production-frontend-host>:80"
+```
+
+Replace `<production-frontend-host>` with the actual application host. Reuse
+the existing secure entrypoint in place of `websecure` when it has another
+name, and reuse the actual certificate resolver in place of
+`<existing-certificate-resolver>`. Ensure this route has precedence over any
+general `swissaustral.com` router (set an explicit higher `priority` if the
+existing rules require it). Do not retain a biosensors subdomain fallback.
+
+The forwarding-header boundary is part of the production security model:
+
+- Never configure `forwardedHeaders.insecure`.
+- Configure `forwardedHeaders.trustedIPs` only for a known, controlled proxy
+  that precedes Traefik; do not list arbitrary client networks.
+- The external proxy must overwrite `X-Forwarded-For`, not append an
+  untrusted browser value.
+- Restrict the application host's port 80 firewall rule to the Traefik VM.
+  Bun must remain reachable only through the Compose network.
+
+The production Turnstile widget must allow `swissaustral.com`. Use the matching
+real site key in `VITE_TURNSTILE_SITE_KEY` and real secret key in
+`TURNSTILE_SECRET_KEY`; never mix keys from different widgets or use test keys.
+
+### Operator-run external validation
+
+Run these commands from the Traefik VM or another approved public environment
+after deployment. They are not repository verification and must not be run
+against the production route from this checkout:
+
+```sh
+# Operator-run: verify the public route and TLS response.
+curl --fail --silent --show-error --location \
+  https://swissaustral.com/biosensors/
+
+# Operator-run: replace this with an asset path from the generated frontend.
+curl --fail --silent --show-error --head \
+  https://swissaustral.com/biosensors/assets/<generated-asset-file>
+```
+
 ## Production proxy requirements
 
-Expose only the frontend/proxy publicly. Route same-origin `/api/contact`
-requests to Bun and keep Bun off the public internet. The proxy must preserve
-the request body and method, and must set/overwrite the browser-facing `Origin`
-according to `PRODUCTION_ORIGIN` (the API rejects other origins).
+Expose only the frontend/proxy publicly. Route public
+`/biosensors/api/contact` requests through the Traefik `stripPrefix`
+middleware so Nginx receives `/api/contact`; keep Bun off the public internet.
+The proxy must preserve the request body and method, and must set/overwrite the
+browser-facing `Origin` according to `PRODUCTION_ORIGIN` (the API rejects other
+origins).
 
 If `TRUST_PROXY=true`, the proxy must overwrite `X-Forwarded-For` rather than
 append untrusted client values, and Bun must be reachable only through that
