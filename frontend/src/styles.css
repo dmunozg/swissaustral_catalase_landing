@@ -363,6 +363,18 @@ h3 {
 .button--dark:hover {
   background: #e6282f;
 }
+.button--accent {
+  background: #c81e25;
+  color: #fbfaf7;
+}
+.button--accent:hover {
+  background: #a7191f;
+}
+.button--accent:focus-visible {
+  outline: 2px solid #fbfaf7;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px #0c202b;
+}
 .button--outline {
   color: #0c202b;
   border-color: rgba(12, 32, 43, 0.35);
