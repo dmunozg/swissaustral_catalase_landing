@@ -293,7 +293,7 @@ function App() {
               {label}
             </a>
           ))}
-          <Button href="#contact" variant="small" onClick={goTo("#contact")}>
+          <Button href="#contact" variant="accent" onClick={goTo("#contact")}>
             Talk to a scientist
           </Button>
         </nav>
@@ -320,7 +320,7 @@ function App() {
               <ArrowUpRight className="arrow-icon" aria-hidden="true" />
             </a>
           ))}
-          <Button href="#contact" variant="light" onClick={goTo("#contact")}>
+          <Button href="#contact" variant="accent" onClick={goTo("#contact")}>
             Talk to a scientist
           </Button>
         </div>
@@ -344,7 +344,7 @@ function App() {
             <div className="hero-actions">
               <Button
                 href="#evidence"
-                variant="light"
+                variant="accent"
                 onClick={goTo("#evidence")}
               >
                 Explore the evidence
@@ -429,7 +429,7 @@ function App() {
             <div className="section-cta">
               <Button
                 href="#contact"
-                variant="outline"
+                variant="accent"
                 onClick={goTo("#contact")}
               >
                 Book a technical meeting
@@ -523,7 +523,7 @@ function App() {
               </div>
               <Button
                 href="#contact"
-                variant="light-outline"
+                variant="accent"
                 onClick={goTo("#contact")}
               >
                 Book a technical meeting
@@ -591,7 +591,7 @@ function App() {
             <div className="section-cta">
               <Button
                 href="#contact"
-                variant="outline"
+                variant="accent"
                 onClick={goTo("#contact")}
               >
                 Evaluate Cold-Active Catalase in your sensor
@@ -640,7 +640,7 @@ function App() {
             <div className="section-cta section-cta--evidence">
               <Button
                 href="#contact"
-                variant="light"
+                variant="accent"
                 onClick={goTo("#contact")}
               >
                 Evaluate Cold-Active Catalase in your sensor
@@ -722,7 +722,7 @@ function App() {
               </p>
               <Button
                 href="#contact"
-                variant="outline"
+                variant="accent"
                 onClick={goTo("#contact")}
               >
                 Request full technical details
@@ -788,7 +788,7 @@ function App() {
                   <span>Protected by Cloudflare Turnstile</span>
                   <button
                     type="submit"
-                    className="button button--light"
+                    className="button button--accent"
                     disabled={isSubmitting}
                   >
                     {isSubmitting
