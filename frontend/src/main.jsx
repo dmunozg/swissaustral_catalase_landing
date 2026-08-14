@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
+import { initializeGoogleTag, trackGenerateLead } from "./google-tag.js";
 import "./styles.css";
 
 const navItems = [
@@ -252,6 +253,7 @@ function App() {
         return;
       }
 
+      trackGenerateLead();
       form.reset();
       setFormState({
         status: "success",
@@ -888,4 +890,5 @@ function MetricCard({ metric }) {
   );
 }
 
+initializeGoogleTag(import.meta.env.VITE_GOOGLE_TAG_ID);
 createRoot(document.getElementById("root")).render(<App />);
