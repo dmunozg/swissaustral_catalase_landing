@@ -72,6 +72,13 @@ test("built HTML contains the configured Google Tag Manager snippets", () => {
   assert.doesNotMatch(html, /googletagmanager\.com\/gtag\/js/);
 });
 
+test("built HTML contains the configured WhatsApp chat link", () => {
+  assert.match(
+    html,
+    /<a\b[^>]*class="whatsapp-fab"[^>]*href="https:\/\/wa\.me\/41790000000\?text=Hello%2C%20I%20am%20interested%20in%20Cold-Active%20Catalase\."[^>]*target="_blank"[^>]*rel="noopener noreferrer"[^>]*aria-label="Chat with us on WhatsApp"/,
+  );
+});
+
 test("built HTML contains exactly the two external Swissaustral logo links", () => {
   const logoLinks = [
     ...html.matchAll(

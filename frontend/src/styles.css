@@ -1153,7 +1153,75 @@ h3 em {
     transform: scaleY(1);
   }
 }
+.whatsapp-fab {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right, 0px));
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  z-index: 30;
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #128c7e;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(12, 32, 43, 0.28);
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.whatsapp-fab svg {
+  width: 29px;
+  height: 33px;
+  display: block;
+  fill: currentColor;
+}
+.whatsapp-fab::after {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  width: max-content;
+  max-width: min(240px, calc(100vw - 112px));
+  padding: 9px 12px;
+  border-radius: 4px;
+  background: #0c202b;
+  color: #fbfaf7;
+  content: attr(data-tooltip);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(8px, -50%);
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.whatsapp-fab:hover {
+  background: #0d7569;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(12, 32, 43, 0.34);
+}
+.whatsapp-fab:hover::after,
+.whatsapp-fab:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+.whatsapp-fab:focus-visible {
+  outline: 2px solid #fbfaf7;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px #0c202b;
+}
+.mobile-menu--open ~ .whatsapp-fab {
+  visibility: hidden;
+}
 @media (min-width: 680px) {
+  .whatsapp-fab {
+    right: max(24px, env(safe-area-inset-right, 0px));
+    bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  }
   .page-container {
     width: min(1180px, calc(100% - 80px));
   }
@@ -1243,6 +1311,16 @@ h3 em {
   }
 }
 @media (min-width: 980px) {
+  .whatsapp-fab {
+    right: max(28px, env(safe-area-inset-right, 0px));
+    bottom: max(28px, env(safe-area-inset-bottom, 0px));
+    width: 80px;
+    height: 80px;
+  }
+  .whatsapp-fab svg {
+    width: 42px;
+    height: 48px;
+  }
   .site-header {
     position: fixed;
     height: 86px;

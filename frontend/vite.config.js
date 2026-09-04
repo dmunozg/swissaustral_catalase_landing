@@ -40,6 +40,8 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
   const turnstileSiteKey = env.VITE_TURNSTILE_SITE_KEY?.trim();
   const googleTagManagerId = env.VITE_GOOGLE_TAG_MANAGER_ID?.trim();
+  const whatsAppPhone = env.VITE_WHATSAPP_PHONE?.trim();
+  const whatsAppMessage = env.VITE_WHATSAPP_MESSAGE?.trim();
   if (
     command === "build" &&
     (!turnstileSiteKey || CLOUDFLARE_TEST_TURNSTILE_SITE_KEYS.has(turnstileSiteKey))
@@ -57,6 +59,17 @@ export default defineConfig(({ command, mode }) => {
     throw new Error(
       "VITE_GOOGLE_TAG_MANAGER_ID is required for production builds.",
     );
+  }
+  if (command === "build" && !whatsAppPhone) {
+    throw new Error("VITE_WHATSAPP_PHONE is required for production builds.");
+  }
+  if (whatsAppPhone && !/^[0-9]{7,15}$/.test(whatsAppPhone)) {
+    throw new Error(
+      "VITE_WHATSAPP_PHONE must contain 7 to 15 digits, including the country code.",
+    );
+  }
+  if (command === "build" && !whatsAppMessage) {
+    throw new Error("VITE_WHATSAPP_MESSAGE is required for production builds.");
   }
 
   return {
