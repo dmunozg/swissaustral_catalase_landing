@@ -60,6 +60,18 @@ test("built HTML contains the SEO metadata contract", () => {
   );
 });
 
+test("built HTML contains the configured Google Tag Manager snippets", () => {
+  assert.match(
+    html,
+    /<head>\s*<!-- Google Tag Manager -->[\s\S]*?googletagmanager\.com\/gtm\.js\?id=[\s\S]*?GTM-TEST123/,
+  );
+  assert.match(
+    html,
+    /<body>\s*<!-- Google Tag Manager \(noscript\) -->\s*<noscript><iframe src="https:\/\/www\.googletagmanager\.com\/ns\.html\?id=GTM-TEST123"/,
+  );
+  assert.doesNotMatch(html, /googletagmanager\.com\/gtag\/js/);
+});
+
 test("built HTML contains exactly the two external Swissaustral logo links", () => {
   const logoLinks = [
     ...html.matchAll(
