@@ -174,8 +174,12 @@ button {
   position: absolute;
   inset: 0;
   z-index: -3;
-  background: url("/assets/patagonia-hero-v2.jpg") center center / cover
-    no-repeat;
+  background: url("/assets/patagonia-hero-v2-optimized.jpg") center center /
+    cover no-repeat;
+  background-image: image-set(
+    url("/assets/patagonia-hero-v2.webp") type("image/webp"),
+    url("/assets/patagonia-hero-v2-optimized.jpg") type("image/jpeg")
+  );
 }
 .hero-overlay {
   position: absolute;
