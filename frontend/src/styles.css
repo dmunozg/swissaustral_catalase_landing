@@ -1214,8 +1214,10 @@ h3 em {
   outline-offset: 3px;
   box-shadow: 0 0 0 5px #0c202b;
 }
-.mobile-menu--open ~ .whatsapp-fab {
-  visibility: hidden;
+@media (max-width: 979px) {
+  .mobile-menu--open ~ .whatsapp-fab {
+    visibility: hidden;
+  }
 }
 @media (min-width: 680px) {
   .whatsapp-fab {
