@@ -20,17 +20,17 @@ Frontend variables:
 - `VITE_TURNSTILE_SITE_KEY`: public Cloudflare Turnstile site key. It is safe
   to expose in browser JavaScript. Use a test site key only for local
   development; production requires the real site key.
-- `VITE_GOOGLE_TAG_ID`: optional public Google tag/measurement ID. It is baked
-  into the frontend at build time, and can be left blank to disable tracking.
-  This is not a secret, and this repository does not provide a Google test ID.
+- `VITE_GOOGLE_TAG_MANAGER_ID`: public Google Tag Manager container ID. It is
+  baked into the frontend at build time and must match `GTM-[A-Z0-9]+` for
+  production builds. It is not a secret and may be left blank in development.
 - `VITE_CONTACT_API_URL`: direct development API URL, normally
   `http://127.0.0.1:3000/api/contact`. Leave it unset in production so the form
   uses the same-origin `/biosensors/api/contact` route.
 
-When `VITE_GOOGLE_TAG_ID` is configured, the frontend sends the GA4
-`generate_lead` event only after a contact submission succeeds. In GA4, mark
-`generate_lead` as a key event separately; GA4 configuration is not automated
-by this repository.
+When `VITE_GOOGLE_TAG_MANAGER_ID` is configured, the frontend pushes the
+`generate_lead` event to GTM's data layer only after a contact submission
+succeeds. Configure the corresponding tag and trigger in the GTM portal; portal
+configuration is not automated by this repository.
 
 For production, set `VITE_TURNSTILE_SITE_KEY` to the real public Turnstile site
 key configured for `swissaustral.com`. Do not use Cloudflare test values. The
@@ -94,14 +94,14 @@ docker compose -f compose.dev.yml up
 The frontend is available at <http://localhost:5173> and Bun at
 <http://localhost:3000>. Compose supplies the Cloudflare test site key unless
 `VITE_TURNSTILE_SITE_KEY` is set in the shell or an env file. It passes
-`VITE_GOOGLE_TAG_ID` through when set, with no fallback value; leave it blank
-to disable Google tracking.
+`VITE_GOOGLE_TAG_MANAGER_ID` through when set, with no fallback value; leave it
+blank to disable GTM in development.
 
 ## Production startup and operations
 
 Use the default `compose.yml` for production. First copy `.env.example` to
 `.env` and replace every placeholder with real Turnstile and SMTP credentials.
-Set the optional public Google tag ID if tracking is desired.
+Set the required public `VITE_GOOGLE_TAG_MANAGER_ID` container ID.
 The production origin must remain `https://swissaustral.com`; the public
 frontend route is `https://swissaustral.com/biosensors/`.
 

@@ -9,9 +9,37 @@ const CLOUDFLARE_TEST_TURNSTILE_SITE_KEYS = new Set([
   "3x00000000000000000000FF",
 ]);
 
+function googleTagManagerPlugin(containerId) {
+  return {
+    name: "google-tag-manager",
+    transformIndexHtml(html) {
+      if (!containerId) {
+        return html;
+      }
+
+      const headSnippet = `<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${containerId}');</script>
+<!-- End Google Tag Manager -->`;
+      const bodySnippet = `<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${containerId}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->`;
+
+      return html
+        .replace("<head>", `<head>\n    ${headSnippet}`)
+        .replace("<body>", `<body>\n    ${bodySnippet}`);
+    },
+  };
+}
+
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
   const turnstileSiteKey = env.VITE_TURNSTILE_SITE_KEY?.trim();
+  const googleTagManagerId = env.VITE_GOOGLE_TAG_MANAGER_ID?.trim();
   if (
     command === "build" &&
     (!turnstileSiteKey || CLOUDFLARE_TEST_TURNSTILE_SITE_KEYS.has(turnstileSiteKey))
@@ -20,12 +48,22 @@ export default defineConfig(({ command, mode }) => {
       "VITE_TURNSTILE_SITE_KEY is required for production builds and must not be Cloudflare's test site key.",
     );
   }
+  if (googleTagManagerId && !/^GTM-[A-Z0-9]+$/.test(googleTagManagerId)) {
+    throw new Error(
+      "VITE_GOOGLE_TAG_MANAGER_ID must match GTM-[A-Z0-9]+ when configured.",
+    );
+  }
+  if (command === "build" && !googleTagManagerId) {
+    throw new Error(
+      "VITE_GOOGLE_TAG_MANAGER_ID is required for production builds.",
+    );
+  }
 
   return {
     base: command === "build" ? "/biosensors/" : "/",
     server: {
       allowedHosts: ["vesuvio3", "localhost"],
     },
-    plugins: [react()],
+    plugins: [googleTagManagerPlugin(googleTagManagerId), react()],
   };
 });
