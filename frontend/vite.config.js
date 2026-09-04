@@ -40,7 +40,8 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
   const turnstileSiteKey = env.VITE_TURNSTILE_SITE_KEY?.trim();
   const googleTagManagerId = env.VITE_GOOGLE_TAG_MANAGER_ID?.trim();
-  const whatsAppPhone = env.VITE_WHATSAPP_PHONE?.trim();
+  const whatsAppPhoneRaw = env.VITE_WHATSAPP_PHONE;
+  const whatsAppPhone = whatsAppPhoneRaw?.trim();
   const whatsAppMessage = env.VITE_WHATSAPP_MESSAGE?.trim();
   if (
     command === "build" &&
@@ -63,9 +64,9 @@ export default defineConfig(({ command, mode }) => {
   if (command === "build" && !whatsAppPhone) {
     throw new Error("VITE_WHATSAPP_PHONE is required for production builds.");
   }
-  if (whatsAppPhone && !/^[0-9]{7,15}$/.test(whatsAppPhone)) {
+  if (whatsAppPhone && !/^[0-9]{7,15}$/.test(whatsAppPhoneRaw)) {
     throw new Error(
-      "VITE_WHATSAPP_PHONE must contain 7 to 15 digits, including the country code.",
+      "VITE_WHATSAPP_PHONE must consist of 7 to 15 digits, including the country code, with no spaces or other characters.",
     );
   }
   if (command === "build" && !whatsAppMessage) {
