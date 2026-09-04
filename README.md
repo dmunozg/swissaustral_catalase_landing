@@ -26,10 +26,17 @@ Frontend variables:
 - `VITE_CONTACT_API_URL`: direct development API URL, normally
   `http://127.0.0.1:3000/api/contact`. Leave it unset in production so the form
   uses the same-origin `/biosensors/api/contact` route.
+- `VITE_WHATSAPP_PHONE`: public WhatsApp destination number, baked into the
+  frontend at build time. Production requires 7-15 digits including the country
+  code, with no plus sign, spaces, or punctuation.
+- `VITE_WHATSAPP_MESSAGE`: public prefilled WhatsApp message, baked into the
+  frontend at build time. Production requires a non-empty value. Development
+  uses placeholder phone and message values when either setting is blank.
 
 When `VITE_GOOGLE_TAG_MANAGER_ID` is configured, the frontend pushes the
 `generate_lead` event to GTM's data layer only after a contact submission
-succeeds. Configure the corresponding tag and trigger in the GTM portal; portal
+succeeds and pushes `whatsapp_click` when the floating WhatsApp button is
+selected. Configure the corresponding tags and triggers in the GTM portal; portal
 configuration is not automated by this repository.
 
 For production, set `VITE_TURNSTILE_SITE_KEY` to the real public Turnstile site
@@ -95,13 +102,16 @@ The frontend is available at <http://localhost:5173> and Bun at
 <http://localhost:3000>. Compose supplies the Cloudflare test site key unless
 `VITE_TURNSTILE_SITE_KEY` is set in the shell or an env file. It passes
 `VITE_GOOGLE_TAG_MANAGER_ID` through when set, with no fallback value; leave it
-blank to disable GTM in development.
+blank to disable GTM in development. It also passes `VITE_WHATSAPP_PHONE` and
+`VITE_WHATSAPP_MESSAGE` through when set; leave both blank to use the frontend's
+development placeholders.
 
 ## Production startup and operations
 
 Use the default `compose.yml` for production. First copy `.env.example` to
 `.env` and replace every placeholder with real Turnstile and SMTP credentials.
-Set the required public `VITE_GOOGLE_TAG_MANAGER_ID` container ID.
+Set the required public `VITE_GOOGLE_TAG_MANAGER_ID` container ID and both
+`VITE_WHATSAPP_PHONE` and `VITE_WHATSAPP_MESSAGE` settings.
 The production origin must remain `https://swissaustral.com`; the public
 frontend route is `https://swissaustral.com/biosensors/`.
 

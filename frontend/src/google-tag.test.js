@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { trackGenerateLead } from "./google-tag.js";
+import { trackGenerateLead, trackWhatsAppClick } from "./google-tag.js";
 
 function withWindow(window, callback) {
   const previousWindow = globalThis.window;
@@ -22,8 +22,19 @@ test("queues the generate_lead event without form data", () => {
   assert.deepEqual(fakeWindow.dataLayer, [{ event: "generate_lead" }]);
 });
 
+test("queues the WhatsApp click event", () => {
+  const fakeWindow = { dataLayer: [] };
+
+  withWindow(fakeWindow, () => {
+    trackWhatsAppClick();
+  });
+
+  assert.deepEqual(fakeWindow.dataLayer, [{ event: "whatsapp_click" }]);
+});
+
 test("does nothing when the GTM data layer is unavailable", () => {
   withWindow({}, () => {
     assert.doesNotThrow(() => trackGenerateLead());
+    assert.doesNotThrow(() => trackWhatsAppClick());
   });
 });
